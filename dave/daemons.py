@@ -15,18 +15,20 @@ class Daemon(object):
     def _closectx(self):
         """Shuts down the daemon and closes the DaemonContext."""
         pid = self.ctx.pidfile.read_pid()
-        os.kill(pid, 15)  # SIGTERM
+        if pid is not None:
+            os.kill(pid, 15)  # SIGTERM
         self.ctx.close()
 
-    def __call__(self):
+    def run_daemon(self):
         """Starts/stops/restarts the daemon based on argv."""
         if self.pidpath is None:
             print("No valid PID path.")
             return
         self.ctx = DaemonContext(
-            stdin=sys.stdin,
-            stdout=sys.stdout,
-            pidfile=LockFile(self.pidpath)
+            stdin=self.stdin,
+            stdout=self.stdout,
+            pidfile=LockFile(self.pidpath),
+
         )
         if sys.argv[1] == "start":
             with self.ctx:
