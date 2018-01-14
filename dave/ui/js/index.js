@@ -5,6 +5,7 @@ function addMessage(text, isDave=false) {
     let messageHtml = '<div class="message '
                     + messageClass
                     + '">' + text + '</div>';
+    if (!isDave) $('.message.dave:last-of-type').addClass('last');
     $('.main').append(messageHtml);
 }
 
