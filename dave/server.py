@@ -17,7 +17,7 @@ def run_server(port):
         with open(path.join(uidir, 'index.html')) as f:
             return web.Response(text=f.read(), content_type='text/html')
 
-    @sio.on('dave request', namespace='/')
+    @sio.on('text request', namespace='/')
     async def request(sid, data):
         await sio.emit('plaintext reply', data, room=sid)
 

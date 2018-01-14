@@ -16,10 +16,14 @@ $(function() {
     $('#user-input').on("keydown", function(e) {
         if (e.which == ENTER_KEYCODE) {
             let message = $(this).val();
-            socket.emit("dave request", message);
+            socket.emit("text request", message);
             addMessage(removeTags(message));
             $(this).val("");
         }
+    });
+    $('#speech-input:not(.disabled)').click(function(e) {
+        $(this).addClass('disabled');
+        socket.emit("speech request");
     });
 });
 
