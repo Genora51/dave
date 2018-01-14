@@ -18,8 +18,12 @@ def run_server(port):
             return web.Response(text=f.read(), content_type='text/html')
 
     @sio.on('text request', namespace='/')
-    async def request(sid, data):
+    async def text_request(sid, data):
         await sio.emit('plaintext reply', data, room=sid)
+
+    @sio.on('speech request', namespace='/')
+    async def speech_request(sid, data):
+        await sio.emit('plaintext reply', "Hello, world!", room=sid)
 
     app.router.add_get('/', index)
     app.router.add_static('/', uidir)

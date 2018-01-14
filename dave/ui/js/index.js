@@ -21,9 +21,11 @@ $(function() {
             $(this).val("");
         }
     });
-    $('#speech-input:not(.disabled)').click(function(e) {
-        $(this).addClass('disabled');
-        socket.emit("speech request");
+    $('#speech-input').click(function(e) {
+        if (!$(this).hasClass('disabled')) {
+            $(this).addClass('disabled');
+            socket.emit("speech request", null);
+        }
     });
 });
 
