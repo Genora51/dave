@@ -1,0 +1,97 @@
+/* Main body */
+body {
+    height: 100vh;
+    width: 100vw;
+    padding: 0;
+    margin: 0;
+}
+
+.main {
+    height: calc(100vh - 60px);
+    background-color: #ececec;
+    padding: 5px;
+}
+
+/* Input Elements */
+.input {
+    height: 50px;
+    width: 100vw;
+}
+
+#user-input {
+    border: 0;
+    float: left;
+    width: calc(100vw - 60px);
+    outline: 0;
+    height: 40px;
+    margin: 0;
+    padding: 5px;
+    font-size: 20px;
+    cursor: text;
+}
+
+#speech-input {
+    padding: 5px;
+    width: 40px;
+    height: 40px;
+    float: right;
+    cursor: pointer;
+}
+
+/* Microphone image */
+#speech-input img {
+    height: 40px;
+    width: 40px;
+    opacity: 1;
+    transition: opacity .3s ease,
+                transform .3s ease;
+}
+
+#speech-input:hover img{
+    transform: scale(0.9);
+    opacity: 0.7;
+}
+
+/* Messages */
+@keyframes fadein {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.message {
+    animation: fadein 0.2s linear;
+    border-radius: 25px;
+    padding:10px;
+    margin:2px;
+    font-family: Arial;
+    clear: both;
+    overflow: hidden;
+    transition: border-radius 0.2s;
+    width: auto;
+    max-width: 70vw;
+}
+
+.message.user {
+    text-align: right;
+    float:right;
+    background-color: #ccc;
+}
+
+.message.dave {
+    background-color: #7c7;
+    float: left;
+    border-bottom-left-radius: 5px;
+}
+
+.message.dave + .message.dave{
+    border-top-left-radius: 5px;
+}
+
+.message.dave.last, .message.dave:last-of-type{
+    border-bottom-left-radius: 25px;
+}
