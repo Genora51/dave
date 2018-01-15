@@ -23,7 +23,7 @@ def run_server(port):
 
     @sio.on('speech request', namespace='/')
     async def speech_request(sid, data):
-        await sio.emit('plaintext reply', "Hello, world!", room=sid)
+        await sio.emit('speech reply', "Hello, world!", room=sid)
 
     app.router.add_get('/', index)
     app.router.add_static('/', uidir)
