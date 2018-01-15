@@ -3,6 +3,7 @@ from daemons import Daemon
 from os import path
 import socketio
 import os
+import speech_recognition as sr
 
 fdir = path.dirname(path.abspath(__file__))
 uidir = path.join(fdir, 'ui')
@@ -24,7 +25,14 @@ def run_server(port):
 
     @sio.on('speech request', namespace='/')
     async def speech_request(sid, data):
-        await sio.emit('speech reply', "Hello, world!", room=sid)
+        r = sr.Recognizer()
+        with sr.Microphone() as source:
+            audio = r.listen(source)
+        try:
+            message = [r.recognize_google(audio, language="en-GB"), False]
+        except (sr.UnknownValueError, sr.RequestError):
+            message = ["Sorry, I didn't understand that.", True]
+        await sio.emit('speech reply', message, room=sid)
 
     app.router.add_get('/', index)
     app.router.add_static('/', uidir)

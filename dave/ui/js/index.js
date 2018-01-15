@@ -35,8 +35,14 @@ socket.on('plaintext reply', function(message) {
     addMessage(removeTags(message), isDave=true);
 });
 
-socket.on('speech reply', function(message) {
-    addMessage(removeTags(message));
+socket.on('speech reply', function(data) {
     $('#speech-input').removeClass('disabled');
-    socket.emit('text request', message);
+    let message = data[0];
+    let error = data[1];
+    if (!error) {
+        addMessage(removeTags(message));
+        socket.emit('text request', message);
+    } else {
+        addMessage(removeTags(message), isDave=true);
+    }
 });
