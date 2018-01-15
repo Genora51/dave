@@ -16,9 +16,11 @@ $(function() {
     $('#user-input').on("keydown", function(e) {
         if (e.which == ENTER_KEYCODE) {
             let message = $(this).val();
-            socket.emit("text request", message);
-            addMessage(removeTags(message));
-            $(this).val("");
+            if (message !== "") {
+                socket.emit("text request", message);
+                addMessage(removeTags(message));
+                $(this).val("");
+            }
         }
     });
     $('#speech-input').click(function(e) {
