@@ -12,9 +12,13 @@ class Daemon(object):
     def run(self):
         raise NotImplementedError
 
+    def shutdown(self, pid):
+        pass
+
     def _closectx(self):
         """Shuts down the daemon and closes the DaemonContext."""
         pid = self.ctx.pidfile.read_pid()
+        self.shutdown(pid)
         if pid is not None:
             os.kill(pid, 15)  # SIGTERM
         self.ctx.close()
