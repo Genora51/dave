@@ -2,6 +2,7 @@ from aiohttp import web
 from daemons import Daemon
 from os import path
 import socketio
+import os
 
 fdir = path.dirname(path.abspath(__file__))
 uidir = path.join(fdir, 'ui')
@@ -40,6 +41,8 @@ class ServerDaemon(Daemon):
     def run(self):
         run_server(self.port)
 
+    def shutdown(self, pid):
+        os.kill(pid, 15)
 
 if __name__ == "__main__":
     server_daemon = ServerDaemon()
