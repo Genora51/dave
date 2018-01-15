@@ -28,7 +28,7 @@ def run_server(port):
         with sr.Microphone() as source:
             audio = r.listen(source)
         try:
-            message = [r.recognize_google(audio), False]
+            message = [r.recognize_google(audio, language="en-GB"), False]
         except (sr.UnknownValueError, sr.RequestError):
             message = ["Sorry, I didn't understand that.", True]
         await sio.emit('speech reply', message, room=sid)
