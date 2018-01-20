@@ -10,6 +10,7 @@ body {
     height: calc(100vh - 60px);
     background-color: #ececec;
     padding: 5px;
+    overflow: scroll;
 }
 
 /* Input Elements */
