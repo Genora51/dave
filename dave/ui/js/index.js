@@ -8,7 +8,10 @@ function addMessage(text, isDave=false) {
                     + messageClass
                     + '">' + text + '</div>';
     if (!isDave) $('.message.dave:last-of-type').addClass('last');
-    $('.main').append(messageHtml);
+    let $main = $('.main');
+    $main.append(messageHtml)
+    let height = $main[0].scrollHeight;
+    $main.scrollTop(height);
 }
 
 $(function() {
