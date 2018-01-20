@@ -37,7 +37,9 @@ $(function() {
 });
 
 socket.on('plaintext reply', function(message) {
-    addMessage(removeTags(message), isDave=true);
+    if (message !== null) {
+        addMessage(removeTags(message), isDave=true);
+    }
 });
 
 socket.on('speech reply', function(data) {

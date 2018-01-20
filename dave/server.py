@@ -4,6 +4,7 @@ from os import path
 import socketio
 import os
 import speech_recognition as sr
+import matcher
 
 fdir = path.dirname(path.abspath(__file__))
 uidir = path.join(fdir, 'ui')
@@ -13,6 +14,7 @@ def run_server(port):
     sio = socketio.AsyncServer()
     app = web.Application()
     sio.attach(app)
+    module_match = matcher.SpacyMatcher()
 
     async def index(request):
         """Serve the client-side application."""
@@ -21,7 +23,8 @@ def run_server(port):
 
     @sio.on('text request', namespace='/')
     async def text_request(sid, data):
-        await sio.emit('plaintext reply', data, room=sid)
+        module = module_match(data)
+        await sio.emit('plaintext reply', module, room=sid)
 
     @sio.on('speech request', namespace='/')
     async def speech_request(sid, data):
