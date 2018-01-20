@@ -1,4 +1,5 @@
 from fuzzywuzzy import process, fuzz
+import re
 
 
 class Matcher(object):
@@ -35,3 +36,20 @@ class TokensetMatcher(Matcher):
         return process.extractOne(query, self.modules,
                                   scorer=fuzz.token_set_ratio,
                                   score_cutoff=self.threshold)
+
+
+class FirstMatcher(Matcher):
+    """Matches against the first closely-matching module."""
+    def regex_wordsplit(self, xs):
+        return re.findall(r"[\w']+", xs)
+
+    def __call__(self, query, string=True):
+        if string:
+            query = self.regex_wordsplit(query)
+        for word in query:
+            match = process.extractOne(
+                word, self.modules,
+                scorer=fuzz.ratio, score_cutoff=self.threshold
+            )
+            if match:
+                return match
