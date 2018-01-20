@@ -14,7 +14,7 @@ def run_server(port):
     sio = socketio.AsyncServer()
     app = web.Application()
     sio.attach(app)
-    module_match = matcher.FirstMatcher()
+    module_match = matcher.SpacyMatcher()
 
     async def index(request):
         """Serve the client-side application."""
