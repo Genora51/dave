@@ -11,7 +11,9 @@ function addMessage(text, isDave=false) {
     let $main = $('.main');
     $main.append(messageHtml)
     let height = $main[0].scrollHeight;
-    $main.scrollTop(height);
+    $main.stop().animate({
+        scrollTop: height
+    }, 300);
 }
 
 $(function() {
