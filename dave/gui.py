@@ -1,10 +1,17 @@
 from PyQt5 import QtWidgets, QtWebEngineWidgets
 from PyQt5.QtCore import QUrl
+from PyQt5.QtGui import QIcon
+from os import path
 
 
 def main():
     # Create application
     app = QtWidgets.QApplication([])
+
+    # Add icon to window
+    file_path = path.abspath(path.dirname(__file__))
+    icon_path = path.join(file_path, "ui/img/brain.png")
+    app.setWindowIcon(QIcon(icon_path))
 
     # Add a window
     win = QtWidgets.QWidget()
