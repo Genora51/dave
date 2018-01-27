@@ -28,7 +28,8 @@ class Matcher(object):
         self.modules = list(self.plugins.keys())
 
     def __call__(self, query):
-        return self.match(query)
+        modname = self.match(query)
+        return modname, self.plugins[modname] 
 
     def match(self, query):
         raise NotImplementedError

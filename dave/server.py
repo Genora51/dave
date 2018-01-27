@@ -23,8 +23,8 @@ def run_server(port):
 
     @sio.on('text request', namespace='/')
     async def text_request(sid, data):
-        module = module_match(data)
-        await sio.emit('plaintext reply', module, room=sid)
+        module_name, module = module_match(data)
+        await sio.emit('plaintext reply', module_name, room=sid)
 
     @sio.on('speech request', namespace='/')
     async def speech_request(sid, data):
