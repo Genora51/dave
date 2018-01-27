@@ -28,8 +28,8 @@ class Matcher(object):
         self.modules = list(self.plugins.keys())
 
     def __call__(self, query):
-        modname = self.match(query)
-        return modname, self.plugins[modname] 
+        modname = self.match(query)[0]
+        return modname, self.plugins[modname]
 
     def match(self, query):
         raise NotImplementedError
@@ -98,6 +98,6 @@ class SpacyMatcher(Matcher):
         tree = self.nlp_tree([next(doc.sents).root])
         for _, words in groupby(tree, itemgetter(1)):
             zp = list(zip(*words))
-            fm = self.first_match(zp[0], string=False)
+            fm = self.first_match.match(zp[0], string=False)
             if fm:
                 return fm
