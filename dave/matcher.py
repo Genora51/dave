@@ -3,22 +3,39 @@ import re
 import spacy
 from operator import itemgetter
 from itertools import groupby
+from pluginbase import PluginBase
+from os import path
+from os.path import join
 
 
 class Matcher(object):
     """Matches queries against a module."""
 
     def __init__(self, threshold=75):
-        self.modules = [
-            "hello", "joke", "about", "search"
-        ]
+        file_path = path.abspath(path.dirname(__file__))
+        plugin_base = PluginBase(package='plugins')
+        self.plugin_source = plugin_base.make_plugin_source(
+            searchpath=[
+                join(file_path, 'default_plugins'),
+                join(file_path, 'plugins')
+            ]
+        )
+        self.plugins = {}
         self.threshold = threshold
+        for plugin_name in self.plugin_source.list_plugins():
+            plugin = self.plugin_source.load_plugin(plugin_name)
+            plugin.setup(self)
+        self.modules = list(self.plugins.keys())
 
     def __call__(self, query):
         return self.match(query)
 
     def match(self, query):
         raise NotImplementedError
+
+    def register_aliases(self, aliases, plugin_class):
+        for alias in aliases:
+            self.plugins[alias] = plugin_class
 
 
 class NaiveMatcher(Matcher):
