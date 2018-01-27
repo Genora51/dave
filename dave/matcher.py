@@ -15,19 +15,22 @@ class Matcher(object):
         self.threshold = threshold
 
     def __call__(self, query):
+        return self.match(query)
+
+    def match(self, query):
         raise NotImplementedError
 
 
 class NaiveMatcher(Matcher):
     """Naively matches modules."""
-    def __call__(self, query):
+    def match(self, query):
         return process.extractOne(query, self.modules,
                                   score_cutoff=self.threshold)
 
 
 class PartialMatcher(Matcher):
     """Matches partial words."""
-    def __call__(self, query):
+    def match(self, query):
         return process.extractOne(query, self.modules,
                                   scorer=fuzz.partial_ratio,
                                   score_cutoff=self.threshold)
@@ -35,7 +38,7 @@ class PartialMatcher(Matcher):
 
 class TokensetMatcher(Matcher):
     """Places tokens into a set to match."""
-    def __call__(self, query):
+    def match(self, query):
         return process.extractOne(query, self.modules,
                                   scorer=fuzz.token_set_ratio,
                                   score_cutoff=self.threshold)
@@ -46,7 +49,7 @@ class FirstMatcher(Matcher):
     def regex_wordsplit(self, xs):
         return re.findall(r"[\w']+", xs)
 
-    def __call__(self, query, string=True):
+    def match(self, query, string=True):
         if string:
             query = self.regex_wordsplit(query)
         for word in query:
@@ -72,7 +75,7 @@ class SpacyMatcher(Matcher):
                     yield word.lemma_, s
                 yield from self.nlp_tree(word.children, s + 1)
 
-    def __call__(self, query):
+    def match(self, query):
         doc = self.nlp(query)
         tree = self.nlp_tree([next(doc.sents).root])
         for _, words in groupby(tree, itemgetter(1)):
