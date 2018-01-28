@@ -5,6 +5,7 @@ import socketio
 import os
 import speech_recognition as sr
 import matcher
+import runner
 import spacy
 
 fdir = path.dirname(path.abspath(__file__))
@@ -27,7 +28,14 @@ def run_server(port):
     @sio.on('text request', namespace='/')
     async def text_request(sid, data):
         module_name, module = module_match(data)
-        await sio.emit('plaintext reply', module_name, room=sid)
+        print(module_name, module)
+        if module_name is not None:
+            m_data = runner.extract_data(
+                data, module_name,
+                module_match, nlp
+            )
+            for response in runner.run_module(module, m_data):
+                await sio.emit('plaintext reply', response, room=sid)        
 
     @sio.on('speech request', namespace='/')
     async def speech_request(sid, data):

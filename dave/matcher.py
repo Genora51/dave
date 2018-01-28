@@ -102,4 +102,5 @@ class SpacyMatcher(Matcher):
             zp = list(zip(*words))
             fm = self.first_match.match(zp[0], string=False)
             if fm:
+                self.doc = doc
                 return fm
