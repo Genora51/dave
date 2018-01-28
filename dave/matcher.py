@@ -1,6 +1,5 @@
 from fuzzywuzzy import process, fuzz
 import re
-import spacy
 from operator import itemgetter
 from itertools import groupby
 from pluginbase import PluginBase
@@ -84,7 +83,7 @@ class SpacyMatcher(Matcher):
     def __init__(self, threshold=75):
         super().__init__(threshold)
         self.first_match = FirstMatcher(threshold=self.threshold)
-        self.nlp = spacy.load('en')
+        self.nlp = None
 
     def nlp_tree(self, t, s=0):
         if t is not []:

@@ -5,6 +5,7 @@ import socketio
 import os
 import speech_recognition as sr
 import matcher
+import spacy
 
 fdir = path.dirname(path.abspath(__file__))
 uidir = path.join(fdir, 'ui')
@@ -15,6 +16,8 @@ def run_server(port):
     app = web.Application()
     sio.attach(app)
     module_match = matcher.SpacyMatcher()
+    nlp = spacy.load('en')
+    module_match.nlp = nlp
 
     async def index(request):
         """Serve the client-side application."""
