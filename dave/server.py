@@ -5,6 +5,8 @@ import socketio
 import os
 import speech_recognition as sr
 import matcher
+import runner
+import spacy
 
 fdir = path.dirname(path.abspath(__file__))
 uidir = path.join(fdir, 'ui')
@@ -15,6 +17,8 @@ def run_server(port):
     app = web.Application()
     sio.attach(app)
     module_match = matcher.SpacyMatcher()
+    nlp = spacy.load('en')
+    module_match.nlp = nlp
 
     async def index(request):
         """Serve the client-side application."""
@@ -23,8 +27,15 @@ def run_server(port):
 
     @sio.on('text request', namespace='/')
     async def text_request(sid, data):
-        module = module_match(data)
-        await sio.emit('plaintext reply', module, room=sid)
+        module_name, module = module_match(data)
+        print(module_name, module)
+        if module_name is not None:
+            m_data = runner.extract_data(
+                data, module_name,
+                module_match, nlp
+            )
+            for response in runner.run_module(module, m_data):
+                await sio.emit('plaintext reply', response, room=sid)        
 
     @sio.on('speech request', namespace='/')
     async def speech_request(sid, data):
