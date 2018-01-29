@@ -6,6 +6,14 @@ def extract_data(text, name, matcher, nlp):
         data["doc"] = matcher.doc
     else:
         data["doc"] = nlp(text)
+    doc = data["doc"]
+    keywords = (t for t in doc
+                if not t.is_stop | t.is_punct | t.is_space)
+    stops = [
+        "tell", "show", "dave", "please",
+        "like", "want", "could", data["alias"]
+    ]
+    data["keywords"] = list(filter(lambda x: x.lemma_ not in stops, keywords))
     return data
 
 
