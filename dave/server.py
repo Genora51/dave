@@ -34,8 +34,8 @@ def run_server(port):
                 data, module_name,
                 module_match, nlp
             )
-            for response in runner.run_module(module, m_data):
-                await sio.emit('plaintext reply', response, room=sid)        
+            for form, response in runner.run_module(module, m_data):
+                await sio.emit(form, response, room=sid)
 
     @sio.on('speech request', namespace='/')
     async def speech_request(sid, data):
