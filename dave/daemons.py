@@ -7,7 +7,7 @@ import os
 class Daemon(object):
     """A Daemon class which Daemons can inherit from."""
 
-    stdin = stdout = pidpath = None
+    stdin = stdout = stderr = pidpath = None
 
     def run(self):
         raise NotImplementedError
@@ -31,6 +31,7 @@ class Daemon(object):
         self.ctx = DaemonContext(
             stdin=self.stdin,
             stdout=self.stdout,
+            stderr=self.stderr,
             pidfile=LockFile(self.pidpath),
 
         )
