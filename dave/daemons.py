@@ -7,7 +7,7 @@ import os
 class Daemon(object):
     """A Daemon class which Daemons can inherit from."""
 
-    stdin = stdout = pidpath = None
+    stdin = stdout = stderr = pidpath = None
 
     def run(self):
         raise NotImplementedError
@@ -31,17 +31,21 @@ class Daemon(object):
         self.ctx = DaemonContext(
             stdin=self.stdin,
             stdout=self.stdout,
+            stderr=self.stderr,
             pidfile=LockFile(self.pidpath),
 
         )
-        if sys.argv[1] == "start":
-            with self.ctx:
-                self.run()
-        elif sys.argv[1] == "stop":
-            self._closectx()
-        elif sys.argv[1] == "restart":
-            self._closectx()
-            with self.ctx:
-                self.run()
+        if len(sys.argv) > 1:
+            if sys.argv[1] == "start":
+                with self.ctx:
+                    self.run()
+            elif sys.argv[1] == "stop":
+                self._closectx()
+            elif sys.argv[1] == "restart":
+                self._closectx()
+                with self.ctx:
+                    self.run()
+            else:
+                print("Unrecognised argument.")
         else:
-            print("Unrecognised argument.")
+            self.run()
