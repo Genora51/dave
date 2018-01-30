@@ -35,14 +35,17 @@ class Daemon(object):
             pidfile=LockFile(self.pidpath),
 
         )
-        if sys.argv[1] == "start":
-            with self.ctx:
-                self.run()
-        elif sys.argv[1] == "stop":
-            self._closectx()
-        elif sys.argv[1] == "restart":
-            self._closectx()
-            with self.ctx:
-                self.run()
+        if len(sys.argv) > 1:
+            if sys.argv[1] == "start":
+                with self.ctx:
+                    self.run()
+            elif sys.argv[1] == "stop":
+                self._closectx()
+            elif sys.argv[1] == "restart":
+                self._closectx()
+                with self.ctx:
+                    self.run()
+            else:
+                print("Unrecognised argument.")
         else:
-            print("Unrecognised argument.")
+            self.run()
