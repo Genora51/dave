@@ -14,6 +14,7 @@ function addMessage(text, isDave=false) {
     $main.stop().animate({
         scrollTop: height
     }, 300);
+    return $('.message.dave:last-of-type');
 }
 
 $(function() {
@@ -40,6 +41,17 @@ socket.on('plaintext reply', function(message) {
     if (message !== null) {
         addMessage(removeTags(message), isDave=true);
     }
+});
+
+socket.on('coloured reply', function(data){
+    var message;
+    if (data["form"] == 'msg') {
+        message = removeTags(data["message"]);
+    } else {
+        message = data["message"];
+    }
+    box = addMessage(message, isDave=true);
+    box.css('background-color', data["colour"]);
 });
 
 socket.on('html reply', function(message) {

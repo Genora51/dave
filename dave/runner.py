@@ -34,3 +34,15 @@ def run_module(module, data):
                 yield "plaintext reply", response
             elif cmd == "html":
                 yield "html reply", response
+            elif cmd.startswith("colour:"):
+                sections = cmd.split(":")
+                if len(sections) >= 2:
+                    form = sections[2]
+                else:
+                    form = "msg"
+                data = {
+                    'form': form,
+                    'colour': sections[1],
+                    'message': response
+                }
+                yield "coloured reply", data
