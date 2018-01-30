@@ -42,6 +42,12 @@ socket.on('plaintext reply', function(message) {
     }
 });
 
+socket.on('html reply', function(message) {
+    if (message !== null) {
+        addMessage(message, isDave=true);
+    }
+});
+
 socket.on('speech reply', function(data) {
     $('#speech-input').removeClass('disabled');
     let message = data[0];

@@ -31,4 +31,6 @@ def run_module(module, data):
                     shlex.quote(response)
                 ])
             elif cmd == "msg":
-                yield response
+                yield "plaintext reply", response
+            elif cmd == "html":
+                yield "html reply", response
