@@ -1,6 +1,8 @@
 import subprocess
 from fuzzywuzzy import process, fuzz
 from os import path
+from googleapiclient.discovery import build
+import webbrowser
 
 
 def base_no_ext(pth):
@@ -10,6 +12,10 @@ def base_no_ext(pth):
 class AppOpener:
     def __init__(self, data):
         self.data = data
+        self.cse = build(
+            "customsearch", "v1",
+            developerKey="AIzaSyDpwQVbWUMpAH1dcXZZ-iwxqiDTuUrpTSk"
+        ).cse()
 
     def __iter__(self):
         proc = subprocess.Popen(
@@ -28,6 +34,13 @@ class AppOpener:
             ba = apps[apps_rem.index(best_app[0])]
             yield "msg; say", "Opening {}.".format(best_app[0])
             subprocess.call(["open", ba])
+        else:
+            results = self.cse.list(
+                q=query, cx="015857082664601314423:5a9surbczss"
+            ).execute()
+            result = results["items"][0]
+            yield "msg; say", "Opening {}.".format(result["title"])
+            webbrowser.open(result["link"])
 
 
 def setup(app):
