@@ -48,9 +48,10 @@ class FileFinder:
         self.data = data
 
     def __iter__(self):
+        kws = "*".join(t.orth_ for t in self.data["keywords"])
+        query = "kMDItemDisplayName=='*{}*'cdw".format(kws)
         proc = subprocess.Popen([
-            'mdfind', '-name',
-            " ".join(t.orth_ for t in self.data["keywords"]),
+            'mdfind', query,
         ], stdout=subprocess.PIPE)
         result = proc.communicate()[0].decode("utf-8").splitlines()
         if len(result) > 0:
