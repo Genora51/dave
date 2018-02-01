@@ -58,7 +58,7 @@ class FileFinder:
             name = path.basename(found)
             yield "msg", "Located {}.".format(name)
             yield "say", "Located {}.".format(name.replace(".", " dot "))
-            subprocess.call(["open", found])
+            subprocess.call(["open", "-R", found])
 
 
 def setup(app):
