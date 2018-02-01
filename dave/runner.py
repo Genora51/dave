@@ -1,4 +1,4 @@
-import subprocess
+from asyncio import subprocess
 import shlex
 
 
@@ -21,15 +21,16 @@ def extract_data(text, name, matcher, nlp):
     return data
 
 
-def run_module(module, data):
+async def run_module(module, data):
     for command, response in module(data):
         cmds = command.split("; ")
         for cmd in cmds:
             if cmd == "say":
-                subprocess.Popen([
+                proc = await subprocess.create_subprocess_exec(
                     "say", "-v", "Daniel",
                     shlex.quote(response)
-                ])
+                )
+                await proc.wait()
             elif cmd == "msg":
                 yield "plaintext reply", response
             elif cmd == "html":
