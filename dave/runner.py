@@ -27,8 +27,7 @@ async def run_module(module, data):
         for cmd in cmds:
             if cmd == "say":
                 proc = await subprocess.create_subprocess_exec(
-                    "say", "-v", "Daniel",
-                    shlex.quote(response)
+                    "say", "-v", "Daniel", response
                 )
                 await proc.wait()
             elif cmd == "msg":
