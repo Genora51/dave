@@ -60,6 +60,8 @@ class FileFinder:
             yield "msg", "Located {}.".format(name)
             yield "say", "Located {}.".format(name.replace(".", " dot "))
             subprocess.call(["open", "-R", found])
+        else:
+            yield "msg; say", "I couldn't find that file."
 
 
 def setup(app):
