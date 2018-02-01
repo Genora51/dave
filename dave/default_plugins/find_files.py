@@ -43,6 +43,26 @@ class AppOpener:
             webbrowser.open(result["link"])
 
 
+class FileFinder:
+    def __init__(self, data):
+        self.data = data
+
+    def __iter__(self):
+        proc = subprocess.Popen([
+            'mdfind', '-name',
+            " ".join(t.orth_ for t in self.data["keywords"]),
+        ], stdout=subprocess.PIPE)
+        result = proc.communicate()[0].decode("utf-8").splitlines()
+        if len(result) > 0:
+            found = result[0]
+            name = path.basename(found)
+            yield "msg", "Located {}.".format(name)
+            yield "say", "Located {}.".format(name.replace(".", " dot "))
+            subprocess.call(["open", found])
+
+
 def setup(app):
     ao_aliases = ["open", "run", "start", "launch"]
     app.register_aliases(ao_aliases, AppOpener)
+    ff_aliases = ["find", "locate"]
+    app.register_aliases(ff_aliases, FileFinder)
