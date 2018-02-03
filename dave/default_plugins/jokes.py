@@ -10,6 +10,12 @@ class JokeTeller:
         self.rand = random.Random(time.time())
 
     def __iter__(self):
+        if len(self.data["keywords"]) > 0:
+            yield from self.find_joke()
+        else:
+            yield from self.rand_joke()
+
+    def find_joke(self):
         for kw in self.data["keywords"]:
             opts = urllib.parse.urlencode({
                 'q': 'nsfw:no "{}" NOT flair:Long'.format(kw),
@@ -33,6 +39,24 @@ class JokeTeller:
                 for line in joke:
                     yield "msg; say", line
                 break
+        else:
+            yield from self.rand_joke()
+
+    def rand_joke(self):
+        url = "https://reddit.com/r/jokes/random.json"
+        request = urllib.request.Request(url)
+        with urllib.request.urlopen(request) as response:
+            res = json.load(response)[0]['data']['children']
+        if len(res) > 0:
+            joke_j = res[0]["data"]
+            joke = [joke_j["title"]]
+            txt = list(filter(
+                lambda x: x != '',
+                joke_j["selftext"].splitlines()
+            ))
+            joke += txt
+            for line in joke:
+                yield "msg; say", line
 
 
 def setup(app):
