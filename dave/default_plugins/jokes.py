@@ -1,23 +1,37 @@
 import urllib
+import json
+import random
+import time
 
 
 class JokeTeller:
     def __init__(self, data):
         self.data = data
+        self.rand = random.Random(time.time())
 
     def __iter__(self):
         for kw in self.data["keywords"]:
             opts = urllib.parse.urlencode({
-                'term': kw.lemma_,
-                'limit': 1
+                'q': 'nsfw:no "{}" NOT flair:Long'.format(kw),
+                'sort': 'top',
+                'syntax': 'plain',
+                'restrict_sr': 'on',
+                'limit': '10'
             })
-            url = "https://icanhazdadjoke.com/search?{}".format(opts)
-            headers = {"Accept": "text/plain", 'User-Agent': 'Mozilla/5.0'}
-            request = urllib.request.Request(url, headers=headers)
+            url = "https://reddit.com/r/jokes/search.json?{}".format(opts)
+            request = urllib.request.Request(url)
             with urllib.request.urlopen(request) as response:
-                res = response.read().decode("utf-8")
+                res = json.load(response)['data']['children']
             if len(res) > 0:
-                yield "msg; say", res
+                joke_j = self.rand.choice(res)["data"]
+                joke = [joke_j["title"]]
+                txt = list(filter(
+                    lambda x: x != '',
+                    joke_j["selftext"].splitlines()
+                ))
+                joke += txt
+                for line in joke:
+                    yield "msg; say", line
                 break
 
 
