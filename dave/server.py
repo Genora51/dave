@@ -28,7 +28,6 @@ def run_server(port):
     @sio.on('text request', namespace='/')
     async def text_request(sid, data):
         module_name, module = module_match(data)
-        print(module_name, module)
         if module_name is not None:
             m_data = runner.extract_data(
                 data, module_name,
