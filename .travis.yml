@@ -25,3 +25,5 @@ install:
   - conda env update -q -n dave -f environment.yml
   - source activate dave
   - python setup.py install
+script:
+  - pycodestyle .
