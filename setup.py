@@ -6,6 +6,9 @@ setup(name="dave",
       entry_points={
           'console_scripts': [
               'dave-server = dave.server:main'
+          ],
+          'gui_scripts': [
+              'dave-gui = dave.gui:main'
           ]
       },
       )
