@@ -14,10 +14,9 @@ dependencies:
 - python-engineio
 - python-socketio
 - spacy
+- fuzzywuzzy
+- python-levenshtein
+- speechrecognition
 - pip:
-  - fuzzywuzzy
   - pyaudio
   - pyqt5
-  - python-levenshtein
-  - speechrecognition
-
