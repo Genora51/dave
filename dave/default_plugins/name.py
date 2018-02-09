@@ -6,6 +6,7 @@ class DaveName:
         self.data = data
 
     def __iter__(self):
+        # Pick from a list of responses
         responses = [
             "I am",
             "My name is",
