@@ -9,10 +9,12 @@ class HelloSayer:
 
     def __iter__(self):
         greeting = random.choice(self.aliases).capitalize()
+        # Sometimes add ',' and/or 'there'
         if random.getrandbits(1):
             if random.getrandbits(1):
                 greeting += ','
             greeting += ' there'
+        # Choose between full stop and exclamation mark
         if random.getrandbits(1):
             greeting += '.'
         else:

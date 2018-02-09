@@ -11,7 +11,10 @@ class Matcher(object):
     """Matches queries against a module."""
 
     def __init__(self, threshold=75):
+        self.threshold = threshold
+        # Location of this script
         file_path = path.abspath(path.dirname(__file__))
+        # Create pluginbase
         plugin_base = PluginBase(package='plugins')
         self.plugin_source = plugin_base.make_plugin_source(
             searchpath=[
@@ -19,15 +22,16 @@ class Matcher(object):
                 join(file_path, 'plugins')
             ]
         )
+        # Load all plugins
         self.plugins = {}
-        self.threshold = threshold
         for plugin_name in self.plugin_source.list_plugins():
             plugin = self.plugin_source.load_plugin(plugin_name)
             plugin.setup(self)
         self.modules = list(self.plugins.keys())
 
     def __call__(self, query):
-        modname = self.match(query)
+        """Get closest matching module."""
+        modname = self.match(query)  # Returns (str, int) or None
         if modname:
             return modname[0], self.plugins[modname[0]]
         else:
@@ -37,6 +41,7 @@ class Matcher(object):
         raise NotImplementedError
 
     def register_aliases(self, aliases, plugin_class):
+        """Add aliases for a plugin."""
         for alias in aliases:
             self.plugins[alias] = plugin_class
 
@@ -70,7 +75,7 @@ class FirstMatcher(Matcher):
         return re.findall(r"[\w']+", xs)
 
     def match(self, query, string=True):
-        if string:
+        if string:  # Is the query a string or a list?
             query = self.regex_wordsplit(query)
         for word in query:
             match = process.extractOne(
@@ -86,11 +91,14 @@ class SpacyMatcher(Matcher):
     def __init__(self, threshold=75):
         super().__init__(threshold)
         self.first_match = FirstMatcher(threshold=self.threshold)
+        # The NLP processor is assigned outside the class, after init
         self.nlp = None
 
     def nlp_tree(self, t, s=0):
+        """Iterate through a SpaCy tree."""
         if t is not []:
             for word in t:
+                # Ignore symbols & punctuation
                 if word.pos_ != 'PUNCT' and word.pos_ != 'SYM':
                     yield word.lemma_, s
                 yield from self.nlp_tree(word.children, s + 1)
@@ -98,8 +106,11 @@ class SpacyMatcher(Matcher):
     def match(self, query):
         doc = self.nlp(query)
         tree = self.nlp_tree([next(doc.sents).root])
+        # Iterate through each "branch level" of the tree
         for _, words in groupby(tree, itemgetter(1)):
+            # list of (str, token) -> (list of str, list of tokens)
             zp = list(zip(*words))
+            # Attempt to get first matching module
             fm = self.first_match.match(zp[0], string=False)
             if fm:
                 self.doc = doc

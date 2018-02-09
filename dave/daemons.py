@@ -10,18 +10,20 @@ class Daemon(object):
     stdin = stdout = stderr = pidpath = None
 
     def run(self):
+        """Subclasses should implement this."""
         raise NotImplementedError
 
     def shutdown(self, pid):
+        """On daemon stop, runs this."""
         pass
 
     def _closectx(self):
         """Shuts down the daemon and closes the DaemonContext."""
-        pid = self.ctx.pidfile.read_pid()
+        pid = self.ctx.pidfile.read_pid()  # Process id
         self.shutdown(pid)
         if pid is not None:
             os.kill(pid, 15)  # SIGTERM
-        self.ctx.close()
+        self.ctx.close()  # Close the context manager
 
     def run_daemon(self):
         """Starts/stops/restarts the daemon based on argv."""
@@ -48,4 +50,4 @@ class Daemon(object):
             else:
                 print("Unrecognised argument.")
         else:
-            self.run()
+            self.run()  # Run without daemon
