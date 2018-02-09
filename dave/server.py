@@ -7,14 +7,16 @@ import speech_recognition as sr
 from . import matcher, runner
 import spacy
 
+# Get file directory
 fdir = path.dirname(path.abspath(__file__))
 uidir = path.join(fdir, 'ui')
 
 
 def run_server(port):
-    sio = socketio.AsyncServer()
+    """Run the aiohttp DAVE server."""
+    sio = socketio.AsyncServer()  # Initialise socketio
     app = web.Application()
-    sio.attach(app)
+    sio.attach(app)  # Link socketio to aiohttp server app
     module_match = matcher.SpacyMatcher()
     nlp = spacy.load('en')
     module_match.nlp = nlp
@@ -26,26 +28,34 @@ def run_server(port):
 
     @sio.on('text request', namespace='/')
     async def text_request(sid, data):
+        """Handle text-based DAVE request."""
+        # Attempt to get best-match module
         module_name, module = module_match(data)
         if module_name is not None:
+            # Get module data (keywords etc.)
             m_data = runner.extract_data(
                 data, module_name,
                 module_match, nlp
             )
+            # Emit each message returned with socketio
             async for form, response in runner.run_module(module, m_data):
                 await sio.emit(form, response, room=sid)
 
     @sio.on('speech request', namespace='/')
     async def speech_request(sid, data):
+        """Handle speech recognition."""
         r = sr.Recognizer()
+        # Attempt to recognise audio
         with sr.Microphone() as source:
             audio = r.listen(source)
         try:
             message = [r.recognize_google(audio, language="en-GB"), False]
         except (sr.UnknownValueError, sr.RequestError):
             message = ["Sorry, I didn't understand that.", True]
+        # Emit [message, isDave] with socketio
         await sio.emit('speech reply', message, room=sid)
 
+    # Initialise routes and start server.
     app.router.add_get('/', index)
     app.router.add_static('/', uidir)
     web.run_app(app, port=port)
@@ -62,6 +72,8 @@ class ServerDaemon(Daemon):
         run_server(self.port)
 
     def shutdown(self, pid):
+        """Shuts down socketio connections."""
+        # TODO: Replace this hack with a more elegant shutdown.
         os.kill(pid, 15)
 
 
