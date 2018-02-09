@@ -16,7 +16,10 @@ class JokeTeller:
             yield from self.rand_joke()
 
     def find_joke(self):
+        """Search r/jokes (reddit) for a joke."""
+        # Try for each keyword
         for kw in self.data["keywords"]:
+            # Create url from search term
             opts = urllib.parse.urlencode({
                 'q': 'nsfw:no "{}" NOT flair:Long'.format(kw),
                 'sort': 'top',
@@ -25,29 +28,37 @@ class JokeTeller:
                 'limit': '10'
             })
             url = "https://reddit.com/r/jokes/search.json?{}".format(opts)
+            # Read json from request
             request = urllib.request.Request(url)
             with urllib.request.urlopen(request) as response:
                 res = json.load(response)['data']['children']
+            # If jokes found, pick one
             if len(res) > 0:
                 joke_j = self.rand.choice(res)["data"]
+                # Create list of lines from joke
                 joke = [joke_j["title"]]
                 txt = list(filter(
                     lambda x: x != '',
                     joke_j["selftext"].splitlines()
                 ))
                 joke += txt
+                # Read each line, then break loop
                 for line in joke:
                     yield "msg; say", line
                 break
-        else:
+        else:  # If no joke found, get random joke
             yield from self.rand_joke()
 
     def rand_joke(self):
+        """Get a random joke from reddit's r/jokes."""
+        # URL to get a random joke in json form
         url = "https://reddit.com/r/jokes/random.json"
+        # Read json from url
         request = urllib.request.Request(url)
         with urllib.request.urlopen(request) as response:
             res = json.load(response)[0]['data']['children']
         if len(res) > 0:
+            # Get each line of joke and read it
             joke_j = res[0]["data"]
             joke = [joke_j["title"]]
             txt = list(filter(
