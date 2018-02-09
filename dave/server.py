@@ -1,11 +1,10 @@
 from aiohttp import web
-from daemons import Daemon
+from .daemons import Daemon
 from os import path
 import socketio
 import os
 import speech_recognition as sr
-import matcher
-import runner
+from . import matcher, runner
 import spacy
 
 fdir = path.dirname(path.abspath(__file__))
@@ -65,6 +64,11 @@ class ServerDaemon(Daemon):
     def shutdown(self, pid):
         os.kill(pid, 15)
 
-if __name__ == "__main__":
+
+def main():
     server_daemon = ServerDaemon()
     server_daemon.run_daemon()
+
+
+if __name__ == "__main__":
+    main()

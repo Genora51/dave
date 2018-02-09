@@ -1,0 +1,22 @@
+name: dave
+channels:
+- conda-forge
+- defaults
+dependencies:
+- autopep8
+- dateparser
+- google-api-python-client
+- pluginbase
+- aiohttp
+- pep8
+- python
+- python-daemon
+- python-engineio
+- python-socketio
+- spacy
+- fuzzywuzzy
+- python-levenshtein
+- speechrecognition
+- pip:
+  - pyaudio
+  - pyqt5
