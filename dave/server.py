@@ -30,6 +30,11 @@ def run_server(port):
     async def text_request(sid, data):
         """Handle text-based DAVE request."""
         # Attempt to get best-match module
+        egg_name, egg_module = module_match.egg_match(data)
+        if egg_name is not None:
+            async for form, response in runner.run_egg(egg_module):
+                await sio.emit(form, response, room=sid)
+            return
         module_name, module = module_match(data)
         if module_name is not None:
             # Get module data (keywords etc.)
