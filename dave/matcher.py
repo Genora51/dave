@@ -24,10 +24,12 @@ class Matcher(object):
         )
         # Load all plugins
         self.plugins = {}
+        self.eggs = {}
         for plugin_name in self.plugin_source.list_plugins():
             plugin = self.plugin_source.load_plugin(plugin_name)
             plugin.setup(self)
         self.modules = list(self.plugins.keys())
+        self.egg_names = list(self.eggs.keys())
 
     def __call__(self, query):
         """Get closest matching module."""
@@ -45,6 +47,9 @@ class Matcher(object):
         for alias in aliases:
             self.plugins[alias] = plugin_class
 
+    def register_egg(self, easter_egg, egg_func):
+        """Add an easter egg."""
+        self.eggs[easter_egg] = egg_func
 
 class NaiveMatcher(Matcher):
     """Naively matches modules."""
