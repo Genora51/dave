@@ -10,8 +10,9 @@ from os.path import join
 class Matcher(object):
     """Matches queries against a module."""
 
-    def __init__(self, threshold=75):
+    def __init__(self, threshold=75, egg_threshold=85):
         self.threshold = threshold
+        self.egg_threshold = egg_threshold
         # Location of this script
         file_path = path.abspath(path.dirname(__file__))
         # Create pluginbase
@@ -63,7 +64,7 @@ class Matcher(object):
         """Match against an easter egg."""
         return process.extractOne(query, self.egg_names,
                                   scorer=fuzz.ratio,
-                                  score_cutoff=self.threshold)
+                                  score_cutoff=self.egg_threshold)
 
 
 class NaiveMatcher(Matcher):
@@ -108,8 +109,8 @@ class FirstMatcher(Matcher):
 
 class SpacyMatcher(Matcher):
     """Uses an NLP tree to match modules."""
-    def __init__(self, threshold=75):
-        super().__init__(threshold)
+    def __init__(self, threshold=75, egg_threshold=85):
+        super().__init__(threshold, egg_threshold)
         self.first_match = FirstMatcher(threshold=self.threshold)
         # The NLP processor is assigned outside the class, after init
         self.nlp = None
