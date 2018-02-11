@@ -51,6 +51,21 @@ class Matcher(object):
         """Add an easter egg."""
         self.eggs[easter_egg] = egg_func
 
+    def egg_match(self, query):
+        """Get an easter egg."""
+        eggname = self._egg_module(query)
+        if eggname:
+            return eggname[0], self.eggs[eggname[0]]
+        else:
+            return None, None
+
+    def _egg_module(self, query):
+        """Match against an easter egg."""
+        return process.extractOne(query, self.egg_names,
+                                  scorer=fuzz.ratio,
+                                  score_cutoff=self.threshold)
+
+
 class NaiveMatcher(Matcher):
     """Naively matches modules."""
     def match(self, query):
