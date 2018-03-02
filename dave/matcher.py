@@ -10,8 +10,9 @@ from os.path import join
 class Matcher(object):
     """Matches queries against a module."""
 
-    def __init__(self, threshold=75):
+    def __init__(self, threshold=75, egg_threshold=85):
         self.threshold = threshold
+        self.egg_threshold = egg_threshold
         # Location of this script
         file_path = path.abspath(path.dirname(__file__))
         # Create pluginbase
@@ -24,10 +25,12 @@ class Matcher(object):
         )
         # Load all plugins
         self.plugins = {}
+        self.eggs = {}
         for plugin_name in self.plugin_source.list_plugins():
             plugin = self.plugin_source.load_plugin(plugin_name)
             plugin.setup(self)
         self.modules = list(self.plugins.keys())
+        self.egg_names = list(self.eggs.keys())
 
     def __call__(self, query):
         """Get closest matching module."""
@@ -44,6 +47,24 @@ class Matcher(object):
         """Add aliases for a plugin."""
         for alias in aliases:
             self.plugins[alias] = plugin_class
+
+    def register_egg(self, easter_egg, egg_func):
+        """Add an easter egg."""
+        self.eggs[easter_egg] = egg_func
+
+    def egg_match(self, query):
+        """Get an easter egg."""
+        eggname = self._egg_module(query)
+        if eggname:
+            return eggname[0], self.eggs[eggname[0]]
+        else:
+            return None, None
+
+    def _egg_module(self, query):
+        """Match against an easter egg."""
+        return process.extractOne(query, self.egg_names,
+                                  scorer=fuzz.ratio,
+                                  score_cutoff=self.egg_threshold)
 
 
 class NaiveMatcher(Matcher):
@@ -88,8 +109,8 @@ class FirstMatcher(Matcher):
 
 class SpacyMatcher(Matcher):
     """Uses an NLP tree to match modules."""
-    def __init__(self, threshold=75):
-        super().__init__(threshold)
+    def __init__(self, threshold=75, egg_threshold=85):
+        super().__init__(threshold, egg_threshold)
         self.first_match = FirstMatcher(threshold=self.threshold)
         # The NLP processor is assigned outside the class, after init
         self.nlp = None

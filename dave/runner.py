@@ -25,9 +25,9 @@ def extract_data(text, name, matcher, nlp):
     return data
 
 
-async def run_module(module, data):
-    """Convert module data to UI messages."""
-    for command, response in module(data):
+async def get_responses(generator):
+    """List all responses from a module."""
+    for command, response in generator:
         # List of commands (message types)
         cmds = command.split("; ")
         for cmd in cmds:
@@ -54,3 +54,14 @@ async def run_module(module, data):
                     'message': response
                 }
                 yield "coloured reply", data
+
+
+async def run_module(module, data):
+    """Convert module data to UI messages."""
+    async for reply in get_responses(module(data)):
+        yield reply
+
+
+async def run_egg(egg_module):
+    async for reply in get_responses(egg_module()):
+        yield reply
