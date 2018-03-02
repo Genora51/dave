@@ -23,14 +23,14 @@ function addMessage(text, isDave=false) {
     if (!isDave) $('.message.dave:last-of-type').addClass('last');
     // Animate scroll
     let $main = $('.main');
-    $main.append(messageHtml)
+    let $message = $(messageHtml);
+    $main.append($message)
     let height = $main[0].scrollHeight;
     $main.stop().animate({
         scrollTop: height
     }, 300);
-    // Return last dave message for calling function
-    // TODO: Avoid calling jQuery again
-    return $('.message.dave:last-of-type');
+    // Return last message for calling function
+    return $message;
 }
 
 $(function() {
