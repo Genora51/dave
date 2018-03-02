@@ -1,4 +1,4 @@
-import urllib
+import aiohttp
 import json
 import random
 import time
@@ -22,18 +22,19 @@ class JokeTeller:
         # Try for each keyword
         for kw in self.data["keywords"]:
             # Create url from search term
-            opts = urllib.parse.urlencode({
+            opts = {
                 'q': 'nsfw:no "{}" NOT flair:Long'.format(kw),
                 'sort': 'top',
                 'syntax': 'plain',
                 'restrict_sr': 'on',
                 'limit': '10'
-            })
-            url = "https://reddit.com/r/jokes/search.json?{}".format(opts)
+            }
+            url = "https://reddit.com/r/jokes/search.json"
             # Read json from request
-            request = urllib.request.Request(url)
-            with urllib.request.urlopen(request) as response:
-                res = json.load(response)['data']['children']
+            async with aiohttp.ClientSession() as client:
+                async with client.get(url, params=opts) as resp:
+                    jstring = await resp.read()
+                    res = json.loads(jstring)['data']['children']
             # If jokes found, pick one
             if len(res) > 0:
                 joke_j = self.rand.choice(res)["data"]
@@ -57,9 +58,10 @@ class JokeTeller:
         # URL to get a random joke in json form
         url = "https://reddit.com/r/jokes/random.json"
         # Read json from url
-        request = urllib.request.Request(url)
-        with urllib.request.urlopen(request) as response:
-            res = json.load(response)[0]['data']['children']
+        async with aiohttp.ClientSession() as client:
+            async with client.get(url) as resp:
+                jstring = await resp.read()
+                res = json.loads(jstring)[0]['data']['children']
         if len(res) > 0:
             # Get each line of joke and read it
             joke_j = res[0]["data"]
