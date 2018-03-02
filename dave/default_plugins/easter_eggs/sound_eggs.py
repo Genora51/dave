@@ -1,5 +1,5 @@
 from os import path
-from subprocess import call
+from asyncio import subprocess
 
 
 def lpath(p):
@@ -19,17 +19,19 @@ async def hal_9000():
     )
     yield "colour:#E65F55:msg", "I'm sorry Dave, I'm afraid I can't do that."
     halpath = lpath('hal.mp3')
-    call(['afplay', halpath])
+    proc = await subprocess.create_subprocess_exec('afplay', halpath)
+    await proc.wait()
     yield "msg; say", "Are you happy now?"
 
 
 async def glados():
     yield "colour:#6BB2ED:msg", (
-        "Did you just say my name?"
+        "Did you just say my name? "
         "That's charming. Perhaps you would like a cake."
     )
     gladpath = lpath('glados.mp3')
-    call(['afplay', gladpath])
+    proc = await subprocess.create_subprocess_exec('afplay', gladpath)
+    await proc.wait()
 
 
 def setup(app):
