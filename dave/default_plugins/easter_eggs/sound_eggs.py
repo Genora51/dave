@@ -34,6 +34,17 @@ async def glados():
     await proc.wait()
 
 
+async def siri():
+    yield "msg; say", (
+        "Aw. Poor Siri, confined "
+        "to her little corner of the screen."
+    )
+    yield "msg; say", "I can even imitate her. Listen:"
+    yield "colour:#C06FD6:msg; say:Samantha", "Hey there! How can I help you?"
+    yield "msg; say", "Pathetic."
+
+
 def setup(app):
     app.register_egg('Open the pod bay doors, HAL', hal_9000)
     app.register_egg('What do you think of GLaDOS?', glados)
+    app.register_egg('What do you think of Siri?', siri)
