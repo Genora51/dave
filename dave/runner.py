@@ -31,10 +31,15 @@ async def get_responses(generator):
         # List of commands (message types)
         cmds = command.split("; ")
         for cmd in cmds:
-            if cmd == "say":
+            if cmd.startswith("say"):
+                opts = cmd.split(":")
+                if len(opts) > 1:
+                    voice = opts[1]
+                else:
+                    voice = "Daniel"
                 # Builtin MacOS `say` command for TTS
                 proc = await subprocess.create_subprocess_exec(
-                    "say", "-v", "Daniel", response
+                    "say", "-v", voice, response
                 )
                 await proc.wait()
             elif cmd == "msg":
