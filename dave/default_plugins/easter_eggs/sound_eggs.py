@@ -23,5 +23,15 @@ def hal_9000():
     yield "msg; say", "Are you happy now?"
 
 
+def glados():
+    yield "colour:#6BB2ED:msg", (
+        "Did you just say my name?"
+        "That's charming. Perhaps you would like a cake."
+    )
+    gladpath = lpath('glados.mp3')
+    call(['afplay', gladpath])
+
+
 def setup(app):
     app.register_egg('Open the pod bay doors, HAL', hal_9000)
+    app.register_egg('What do you think of GLaDOS?', glados)
