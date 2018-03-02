@@ -7,7 +7,7 @@ class HelloSayer:
     def __init__(self, data):
         self.data = data
 
-    def __iter__(self):
+    async def __aiter__(self):
         greeting = random.choice(self.aliases).capitalize()
         # Sometimes add ',' and/or 'there'
         if random.getrandbits(1):

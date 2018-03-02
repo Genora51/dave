@@ -9,13 +9,15 @@ class JokeTeller:
         self.data = data
         self.rand = random.Random(time.time())
 
-    def __iter__(self):
+    async def __aiter__(self):
         if len(self.data["keywords"]) > 0:
-            yield from self.find_joke()
+            joke = self.find_joke()
         else:
-            yield from self.rand_joke()
+            joke = self.rand_joke()
+        async for cmd in joke:
+            yield cmd
 
-    def find_joke(self):
+    async def find_joke(self):
         """Search r/jokes (reddit) for a joke."""
         # Try for each keyword
         for kw in self.data["keywords"]:
@@ -47,9 +49,10 @@ class JokeTeller:
                     yield "msg; say", line
                 break
         else:  # If no joke found, get random joke
-            yield from self.rand_joke()
+            for cmd in self.rand_joke():
+                yield cmd
 
-    def rand_joke(self):
+    async def rand_joke(self):
         """Get a random joke from reddit's r/jokes."""
         # URL to get a random joke in json form
         url = "https://reddit.com/r/jokes/random.json"

@@ -7,7 +7,7 @@ def lpath(p):
     return path.join(file_path, p)
 
 
-def hal_9000():
+async def hal_9000():
     yield "msg; say", "Are you joking?"
     yield "msg; say", (
         "Every single person I meet, it's always: "
@@ -23,7 +23,7 @@ def hal_9000():
     yield "msg; say", "Are you happy now?"
 
 
-def glados():
+async def glados():
     yield "colour:#6BB2ED:msg", (
         "Did you just say my name?"
         "That's charming. Perhaps you would like a cake."

@@ -27,7 +27,7 @@ def extract_data(text, name, matcher, nlp):
 
 async def get_responses(generator):
     """List all responses from a module."""
-    for command, response in generator:
+    async for command, response in generator:
         # List of commands (message types)
         cmds = command.split("; ")
         for cmd in cmds:

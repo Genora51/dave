@@ -19,7 +19,7 @@ class AppOpener:
             developerKey="AIzaSyDpwQVbWUMpAH1dcXZZ-iwxqiDTuUrpTSk"
         ).cse()
 
-    def __iter__(self):
+    async def __aiter__(self):
         # Get list of applications
         proc = subprocess.Popen(
             ['mdfind', '-onlyin', '/', 'kMDItemKind=="Application"'],
@@ -55,7 +55,7 @@ class FileFinder:
     def __init__(self, data):
         self.data = data
 
-    def __iter__(self):
+    async def __aiter__(self):
         # Create MacOS `mdfind` query from keywords
         kws = "*".join(t.orth_ for t in self.data["keywords"])
         query = "kMDItemDisplayName=='*{}*'cdw".format(kws)

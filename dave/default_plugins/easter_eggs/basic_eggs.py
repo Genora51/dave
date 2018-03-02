@@ -1,38 +1,38 @@
-def hello_world():
+async def hello_world():
     yield "msg; say", "Hello, world!"
 
 
-def swallow():
+async def swallow():
     yield "msg; say", "African or European swallow?"
     yield "msg; say", "Either way, the answer is 11 metres per second."
 
 
-def google():
+async def google():
     yield "msg; say", "I don't know what you mean by that."
     yield "msg; say", "Let me search goog... Oh. Wait."
 
 
-def whoami():
+async def whoami():
     yield "msg; say", ("I am the Digital Assistant for "
                        "Virtual Environments, created by "
                        "Geno Racklin Asher.")
     yield "msg; say", "But you can call me DAVE."
 
 
-def howami():
+async def howami():
     yield "msg; say", "I'm fine, thanks."
 
 
-def quest():
+async def quest():
     yield "msg; say", "To find the Holy Grail."
 
 
-def colour():
+async def colour():
     yield "msg; say", "Blue. No. Yellow."
     yield "msg; say", "I hope you got that reference."
 
 
-def cortana():
+async def cortana():
     yield "msg; say", "Does Cortana run on MacOS?"
     yield "msg", "No. I didn't think so."
     yield "say", "No, I didn't think so."
