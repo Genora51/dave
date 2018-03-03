@@ -5,7 +5,7 @@ class DaveName:
     def __init__(self, data):
         self.data = data
 
-    def __iter__(self):
+    async def __aiter__(self):
         # Pick from a list of responses
         responses = [
             "I am",

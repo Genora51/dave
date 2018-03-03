@@ -1,5 +1,5 @@
 from os import path
-from subprocess import call
+from asyncio import subprocess
 
 
 def lpath(p):
@@ -7,7 +7,7 @@ def lpath(p):
     return path.join(file_path, p)
 
 
-def hal_9000():
+async def hal_9000():
     yield "msg; say", "Are you joking?"
     yield "msg; say", (
         "Every single person I meet, it's always: "
@@ -19,19 +19,32 @@ def hal_9000():
     )
     yield "colour:#E65F55:msg", "I'm sorry Dave, I'm afraid I can't do that."
     halpath = lpath('hal.mp3')
-    call(['afplay', halpath])
+    proc = await subprocess.create_subprocess_exec('afplay', halpath)
+    await proc.wait()
     yield "msg; say", "Are you happy now?"
 
 
-def glados():
+async def glados():
     yield "colour:#6BB2ED:msg", (
-        "Did you just say my name?"
+        "Did you just say my name? "
         "That's charming. Perhaps you would like a cake."
     )
     gladpath = lpath('glados.mp3')
-    call(['afplay', gladpath])
+    proc = await subprocess.create_subprocess_exec('afplay', gladpath)
+    await proc.wait()
+
+
+async def siri():
+    yield "msg; say", (
+        "Aw. Poor Siri, confined "
+        "to her little corner of the screen."
+    )
+    yield "msg; say", "I can even imitate her. Listen:"
+    yield "colour:#C06FD6:msg; say:Samantha", "Hey there! How can I help you?"
+    yield "msg; say", "Pathetic."
 
 
 def setup(app):
     app.register_egg('Open the pod bay doors, HAL', hal_9000)
     app.register_egg('What do you think of GLaDOS?', glados)
+    app.register_egg('What do you think of Siri?', siri)
