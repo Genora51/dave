@@ -100,8 +100,11 @@ class InputRunner(object):
             data, module_name,
             self.module_match, self.module_match.nlp
         )
-        # Returns that plugin's iterable too.
-        return get_responses(module(m_data))
+        if module_name is not None:
+            # Returns that plugin's iterable too.
+            return get_responses(module(m_data))
+        else:
+            return None
 
     async def __call__(self, data):
         # Add this input to the queue
