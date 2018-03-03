@@ -78,40 +78,58 @@ class InputRunner(object):
     """Manages running plugins."""
 
     def __init__(self, module_match):
+        # Initialise object variables
         self.module_match = module_match
+        # Input queue for premature input
         self.inputs = Queue()
+        # Is a module currently in process?
         self.running = False
+        # Which module is currently being iterated?
         self.module = None
 
     def get_module(self, data):
+        # Is there a matching easter egg?
         egg_name, egg_module = self.module_match.egg_match(data)
+        # If found, return that plugin's iterable
         if egg_name is not None:
             return get_responses(egg_module())
+        # Attempts to match against a plugin
         module_name, module = self.module_match(data)
+        # Extract input data
         m_data = extract_data(
             data, module_name,
             self.module_match, self.module_match.nlp
         )
+        # Returns that plugin's iterable too.
         return get_responses(module(m_data))
 
     async def __call__(self, data):
+        # Add this input to the queue
         await self.inputs.put(data)
+        # Make sure that nothing is already running
         if not self.running:
-            self.running = True
+            self.running = True  # Now it is running
+            # Iterate until inputs run out
             while not self.inputs.empty():
+                # If no current module, matches against a new one
                 if self.module is None:
                     self.module = self.get_module(await self.inputs.get())
-                    if self.module is None:
+                    if self.module is None:  # No match
                         continue
-                else:
+                else:  # Input must have been requested
                     await self.module.asend(await self.inputs.get())
+                # Iterate through the plugin
                 async for reply in self.module:
                     if reply[0] == "input":
+                        # Break on input request (waits until new input)
                         if reply[1] is not None:
                             yield "plaintext reply", reply[1]
                         self.running = False
                         return
                     else:
+                        # Normal case: emit to client
                         yield reply
+                # Once a module has stopped
                 self.module = None
+            # Finished, so no longer running
             self.running = False
