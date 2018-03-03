@@ -20,6 +20,7 @@ def run_server(port):
     module_match = matcher.SpacyMatcher()
     nlp = spacy.load('en')
     module_match.nlp = nlp
+    loop_runner = runner.InputRunner(module_match)
 
     async def index(request):
         """Serve the client-side application."""
@@ -30,21 +31,8 @@ def run_server(port):
     async def text_request(sid, data):
         """Handle text-based DAVE request."""
         # Attempt to get best-match module
-        egg_name, egg_module = module_match.egg_match(data)
-        if egg_name is not None:
-            async for form, response in runner.run_egg(egg_module):
-                await sio.emit(form, response, room=sid)
-            return
-        module_name, module = module_match(data)
-        if module_name is not None:
-            # Get module data (keywords etc.)
-            m_data = runner.extract_data(
-                data, module_name,
-                module_match, nlp
-            )
-            # Emit each message returned with socketio
-            async for form, response in runner.run_module(module, m_data):
-                await sio.emit(form, response, room=sid)
+        async for form, response in loop_runner(data):
+            await sio.emit(form, response, room=sid)
 
     @sio.on('speech request', namespace='/')
     async def speech_request(sid, data):
