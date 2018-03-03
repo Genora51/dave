@@ -22,6 +22,8 @@ def extract_data(text, name, matcher, nlp):
         "like", "want", "could", data["alias"]
     ]
     data["keywords"] = list(filter(lambda x: x.lemma_ not in stops, keywords))
+    # Give modules API access to nlp
+    data["nlp"] = nlp
     return data
 
 
