@@ -27,6 +27,14 @@ def extract_data(text, name, matcher, nlp):
     return data
 
 
+async def say(text, voice="Daniel"):
+    # Builtin MacOS `say` command for TTS
+    proc = await subprocess.create_subprocess_exec(
+        "say", "-v", voice, text
+    )
+    await proc.wait()
+
+
 async def get_responses(generator):
     """List all responses from a module."""
     async for command, response in generator:
@@ -38,14 +46,9 @@ async def get_responses(generator):
                 if cmd.startswith("say"):
                     opts = cmd.split(":")
                     if len(opts) > 1:
-                        voice = opts[1]
+                        await say(response, voice=opts[1])
                     else:
-                        voice = "Daniel"
-                    # Builtin MacOS `say` command for TTS
-                    proc = await subprocess.create_subprocess_exec(
-                        "say", "-v", voice, response
-                    )
-                    await proc.wait()
+                        await say(response)
                 elif cmd == "msg":
                     yield "plaintext reply", response
                 elif cmd == "html":
@@ -127,6 +130,7 @@ class InputRunner(object):
                         # Break on input request (waits until new input)
                         if reply[1] is not None:
                             yield "plaintext reply", reply[1]
+                            await say(reply[1])
                         self.running = False
                         return
                     else:
