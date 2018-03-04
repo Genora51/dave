@@ -26,6 +26,7 @@ class Matcher(object):
         # Load all plugins
         self.plugins = {}
         self.eggs = {}
+        self.fallback = None
         for plugin_name in self.plugin_source.list_plugins():
             plugin = self.plugin_source.load_plugin(plugin_name)
             plugin.setup(self)
@@ -40,6 +41,13 @@ class Matcher(object):
         else:
             return None, None
 
+    def first_lower(self, s):
+        """Convert first letter to lowercase."""
+        if len(s) == 0:
+            return s
+        else:
+            return s[0].lower() + s[1:]
+
     def match(self, query):
         raise NotImplementedError
 
@@ -51,6 +59,10 @@ class Matcher(object):
     def register_egg(self, easter_egg, egg_func):
         """Add an easter egg."""
         self.eggs[easter_egg] = egg_func
+
+    def register_fallback(self, fallback_class):
+        """Add a fallback."""
+        self.fallback = fallback_class
 
     def egg_match(self, query):
         """Get an easter egg."""
@@ -125,7 +137,7 @@ class SpacyMatcher(Matcher):
                 yield from self.nlp_tree(word.children, s + 1)
 
     def match(self, query):
-        doc = self.nlp(query)
+        doc = self.nlp(self.first_lower(query))
         tree = self.nlp_tree([next(doc.sents).root])
         # Iterate through each "branch level" of the tree
         for _, words in groupby(tree, itemgetter(1)):
