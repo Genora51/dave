@@ -15,7 +15,7 @@ uidir = path.join(fdir, 'ui')
 
 def run_server(port):
     """Run the aiohttp DAVE server."""
-    sio = socketio.AsyncServer()  # Initialise socketio
+    sio = socketio.AsyncServer(async_handlers=True)  # Initialise socketio
     app = web.Application()
     sio.attach(app)  # Link socketio to aiohttp server app
     module_match = matcher.SpacyMatcher()
