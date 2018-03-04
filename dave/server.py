@@ -6,6 +6,7 @@ import os
 import speech_recognition as sr
 from . import matcher, runner
 import spacy
+import webbrowser
 
 # Get file directory
 fdir = path.dirname(path.abspath(__file__))
@@ -47,6 +48,11 @@ def run_server(port):
             message = ["Sorry, I didn't understand that.", True]
         # Emit [message, isDave] with socketio
         await sio.emit('speech reply', message, room=sid)
+
+    @sio.on('open link', namespace='/')
+    async def open_link(sid, data):
+        """Open a link in browser"""
+        webbrowser.open(data)
 
     # Initialise routes and start server.
     app.router.add_get('/', index)
