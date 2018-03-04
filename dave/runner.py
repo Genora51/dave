@@ -70,9 +70,12 @@ async def get_responses(generator):
                     yield "coloured reply", data
                 elif cmd == "input":
                     inp = yield cmd, response
-                    command, response = await generator.asend(inp)
-                    yield
-                    break
+                    try:
+                        command, response = await generator.asend(inp)
+                        yield
+                        break
+                    except StopAsyncIteration:
+                        yield
             else:
                 finished = True
 
@@ -131,12 +134,12 @@ class InputRunner(object):
                         if reply[1] is not None:
                             yield "plaintext reply", reply[1]
                             await say(reply[1])
-                        self.running = False
-                        return
+                        break
                     else:
                         # Normal case: emit to client
                         yield reply
-                # Once a module has stopped
-                self.module = None
+                else:
+                    # Once a module has stopped
+                    self.module = None
             # Finished, so no longer running
             self.running = False
