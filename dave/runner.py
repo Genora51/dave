@@ -127,12 +127,12 @@ class InputRunner(object):
                         # Break on input request (waits until new input)
                         if reply[1] is not None:
                             yield "plaintext reply", reply[1]
-                        self.running = False
-                        return
+                        break
                     else:
                         # Normal case: emit to client
                         yield reply
-                # Once a module has stopped
-                self.module = None
+                else:
+                    # Once a module has stopped
+                    self.module = None
             # Finished, so no longer running
             self.running = False
