@@ -6,6 +6,7 @@ import os
 import speech_recognition as sr
 from . import matcher, runner
 import spacy
+import webbrowser
 
 # Get file directory
 fdir = path.dirname(path.abspath(__file__))
@@ -14,7 +15,7 @@ uidir = path.join(fdir, 'ui')
 
 def run_server(port):
     """Run the aiohttp DAVE server."""
-    sio = socketio.AsyncServer()  # Initialise socketio
+    sio = socketio.AsyncServer(async_handlers=True)  # Initialise socketio
     app = web.Application()
     sio.attach(app)  # Link socketio to aiohttp server app
     module_match = matcher.SpacyMatcher()
@@ -47,6 +48,11 @@ def run_server(port):
             message = ["Sorry, I didn't understand that.", True]
         # Emit [message, isDave] with socketio
         await sio.emit('speech reply', message, room=sid)
+
+    @sio.on('open link', namespace='/')
+    async def open_link(sid, data):
+        """Open a link in browser"""
+        webbrowser.open(data)
 
     # Initialise routes and start server.
     app.router.add_get('/', index)

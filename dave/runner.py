@@ -8,10 +8,10 @@ def extract_data(text, name, matcher, nlp):
     data["text"] = text
     data["alias"] = name
     # Use already-run NLP if possible, to increase efficiency
-    if hasattr(matcher, "doc"):
+    if hasattr(matcher, "doc") and matcher.doc is not None:
         data["doc"] = matcher.doc
     else:
-        data["doc"] = nlp(text)
+        data["doc"] = nlp(matcher.first_lower(text))
     doc = data["doc"]
     # Extract "keywords" from the NLP object
     keywords = (t for t in doc
@@ -106,7 +106,9 @@ class InputRunner(object):
             data, module_name,
             self.module_match, self.module_match.nlp
         )
-        if module_name is not None:
+        if module_name is None:
+            module = self.module_match.fallback
+        if module is not None:
             # Returns that plugin's iterable too.
             return get_responses(module(m_data))
         else:
@@ -140,6 +142,7 @@ class InputRunner(object):
                         yield reply
                 else:
                     # Once a module has stopped
+                    self.module_match.doc = None
                     self.module = None
             # Finished, so no longer running
             self.running = False

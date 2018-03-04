@@ -57,6 +57,10 @@ $(function() {
             socket.emit("speech request", null);
         }
     });
+    $(document).on('click', 'a', function(e){
+        e.preventDefault();
+        socket.emit("open link", $(this).attr("href"));
+    });
 });
 
 socket.on('plaintext reply', function(message) {
