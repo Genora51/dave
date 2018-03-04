@@ -67,9 +67,12 @@ async def get_responses(generator):
                     yield "coloured reply", data
                 elif cmd == "input":
                     inp = yield cmd, response
-                    command, response = await generator.asend(inp)
-                    yield
-                    break
+                    try:
+                        command, response = await generator.asend(inp)
+                        yield
+                        break
+                    except StopAsyncIteration:
+                        yield
             else:
                 finished = True
 
