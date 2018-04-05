@@ -35,9 +35,30 @@ async def say(text, voice="Daniel"):
     await proc.wait()
 
 
+def make_async(coro):
+    """Converts synchronous to asynchronous generators."""
+    if hasattr(coro, "__aiter__"):
+        # Already async, no changes
+        return coro
+    else:
+        async def agen():
+            r = coro.send(None)  # prime the coro
+            while True:
+                try:
+                    try:
+                        x = yield r
+                    except Exception as e:
+                        r = coro.throw(e)
+                    else:
+                        r = coro.send(x)
+                except StopIteration:
+                    break
+        return agen()
+
+
 async def get_responses(generator):
     """List all responses from a module."""
-    async for command, response in generator:
+    async for command, response in make_async(generator):
         finished = False
         while not finished:
             # List of commands (message types)
