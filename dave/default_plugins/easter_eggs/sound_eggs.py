@@ -34,7 +34,7 @@ async def glados():
     await proc.wait()
 
 
-async def siri():
+def siri():
     yield "msg; say", (
         "Aw. Poor Siri, confined "
         "to her little corner of the screen."
