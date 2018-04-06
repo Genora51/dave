@@ -20,35 +20,34 @@ class JokeTeller:
     async def find_joke(self):
         """Search r/jokes (reddit) for a joke."""
         # Try for each keyword
-        for kw in self.data["keywords"]:
-            # Create url from search term
-            opts = {
-                'q': 'nsfw:no "{}" NOT flair:Long'.format(kw),
-                'sort': 'top',
-                'syntax': 'plain',
-                'restrict_sr': 'on',
-                'limit': '10'
-            }
-            url = "https://reddit.com/r/jokes/search.json"
-            # Read json from request
-            async with aiohttp.ClientSession() as client:
-                async with client.get(url, params=opts) as resp:
-                    jstring = await resp.read()
-                    res = json.loads(jstring)['data']['children']
-            # If jokes found, pick one
-            if len(res) > 0:
-                joke_j = self.rand.choice(res)["data"]
-                # Create list of lines from joke
-                joke = [joke_j["title"]]
-                txt = list(filter(
-                    lambda x: x != '',
-                    joke_j["selftext"].splitlines()
-                ))
-                joke += txt
-                # Read each line, then break loop
-                for line in joke:
-                    yield "msg; say", line
-                break
+        kw = " ".join(self.data["keywords"])
+        # Create url from search term
+        opts = {
+            'q': 'nsfw:no "{}" NOT flair:Long'.format(kw),
+            'sort': 'top',
+            'syntax': 'plain',
+            'restrict_sr': 'on',
+            'limit': '10'
+        }
+        url = "https://reddit.com/r/jokes/search.json"
+        # Read json from request
+        async with aiohttp.ClientSession() as client:
+            async with client.get(url, params=opts) as resp:
+                jstring = await resp.read()
+                res = json.loads(jstring)['data']['children']
+        # If jokes found, pick one
+        if len(res) > 0:
+            joke_j = self.rand.choice(res)["data"]
+            # Create list of lines from joke
+            joke = [joke_j["title"]]
+            txt = list(filter(
+                lambda x: x != '',
+                joke_j["selftext"].splitlines()
+            ))
+            joke += txt
+            # Read each line, then break loop
+            for line in joke:
+                yield "msg; say", line
         else:  # If no joke found, get random joke
             for cmd in self.rand_joke():
                 yield cmd
