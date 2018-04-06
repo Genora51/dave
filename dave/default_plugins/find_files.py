@@ -61,7 +61,7 @@ class FileFinder:
         kws = "*".join(t.orth_ for t in self.data["keywords"])
         query = "kMDItemDisplayName=='*{}*'cdw".format(kws)
         # Execute query and get list of matches
-        proc = subprocess.create_subprocess_exec(
+        proc = await subprocess.create_subprocess_exec(
             'mdfind', query, stdout=subprocess.PIPE
         )
         result_l = await proc.communicate()
