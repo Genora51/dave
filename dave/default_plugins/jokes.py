@@ -49,7 +49,7 @@ class JokeTeller:
             for line in joke:
                 yield "msg; say", line
         else:  # If no joke found, get random joke
-            for cmd in self.rand_joke():
+            async for cmd in self.rand_joke():
                 yield cmd
 
     async def rand_joke(self):
