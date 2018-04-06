@@ -20,7 +20,7 @@ class JokeTeller:
     async def find_joke(self):
         """Search r/jokes (reddit) for a joke."""
         # Try for each keyword
-        kw = " ".join(self.data["keywords"])
+        kw = " ".join(w.orth_ for w in self.data["keywords"])
         # Create url from search term
         opts = {
             'q': 'nsfw:no "{}" NOT flair:Long'.format(kw),
