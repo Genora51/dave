@@ -167,7 +167,9 @@ class InputRunner(object):
                         # Once a module has stopped
                         self.module_match.doc = None
                         self.module = None
-                except Exception:
+                except Exception as e:
+                    import traceback
+                    traceback.print_exc()
                     # An error in the plugin has occurred
                     msg = "Sorry, something went wrong there."
                     # Send message to user
