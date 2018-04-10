@@ -56,9 +56,10 @@ def make_async(coro):
         return agen()
 
 
-async def get_responses(generator):
+async def get_responses(coro):
     """List all responses from a module."""
-    async for command, response in make_async(generator):
+    generator = make_async(coro)
+    async for command, response in generator:
         finished = False
         while not finished:
             # List of commands (message types)
