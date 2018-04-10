@@ -56,9 +56,10 @@ def make_async(coro):
         return agen()
 
 
-async def get_responses(generator):
+async def get_responses(coro):
     """List all responses from a module."""
-    async for command, response in make_async(generator):
+    generator = make_async(coro)
+    async for command, response in generator:
         finished = False
         while not finished:
             # List of commands (message types)
@@ -166,7 +167,9 @@ class InputRunner(object):
                         # Once a module has stopped
                         self.module_match.doc = None
                         self.module = None
-                except Exception:
+                except Exception as e:
+                    import traceback
+                    traceback.print_exc()
                     # An error in the plugin has occurred
                     msg = "Sorry, something went wrong there."
                     # Send message to user
