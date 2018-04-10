@@ -151,18 +151,28 @@ class InputRunner(object):
                 else:  # Input must have been requested
                     await self.module.asend(await self.inputs.get())
                 # Iterate through the plugin
-                async for reply in self.module:
-                    if reply[0] == "input":
-                        # Break on input request (waits until new input)
-                        if reply[1] is not None:
-                            yield "plaintext reply", reply[1]
-                            await say(reply[1])
-                        break
+                try:
+                    async for reply in self.module:
+                        if reply[0] == "input":
+                            # Break on input request (waits until new input)
+                            if reply[1] is not None:
+                                yield "plaintext reply", reply[1]
+                                await say(reply[1])
+                            break
+                        else:
+                            # Normal case: emit to client
+                            yield reply
                     else:
-                        # Normal case: emit to client
-                        yield reply
-                else:
-                    # Once a module has stopped
+                        # Once a module has stopped
+                        self.module_match.doc = None
+                        self.module = None
+                except Exception:
+                    # An error in the plugin has occurred
+                    msg = "Sorry, something went wrong there."
+                    # Send message to user
+                    yield "plaintext reply", msg
+                    await say(msg)
+                    # Reset module
                     self.module_match.doc = None
                     self.module = None
             # Finished, so no longer running
