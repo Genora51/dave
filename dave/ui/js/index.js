@@ -59,7 +59,8 @@ $(function() {
     });
     $('.toolbar').click(function(e) {
         // Send request
-        socket.emit("reload modules", null);
+        if (confirm("Reload module library?"))
+            socket.emit("reload modules", null);
     });
     $(document).on('click', 'a', function(e){
         e.preventDefault();
