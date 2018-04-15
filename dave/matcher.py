@@ -127,10 +127,18 @@ class FirstMatcher(Matcher):
 class SpacyMatcher(Matcher):
     """Uses an NLP tree to match modules."""
     def __init__(self, threshold=75, egg_threshold=85):
+        self.first_match = FirstMatcher(threshold, egg_threshold)
         super().__init__(threshold, egg_threshold)
-        self.first_match = FirstMatcher(threshold=self.threshold)
         # The NLP processor is assigned outside the class, after init
         self.nlp = None
+
+    def load_plugins(self):
+        self.first_match.load_plugins()
+        self.plugins = self.first_match.plugins
+        self.fallback = self.first_match.fallback
+
+    def egg_match(self, query):
+        return self.first_match.egg_match(query)
 
     def nlp_tree(self, t, s=0):
         """Iterate through a SpaCy tree."""
