@@ -57,6 +57,10 @@ $(function() {
             socket.emit("speech request", null);
         }
     });
+    $('.toolbar').click(function(e) {
+        // Send request
+        socket.emit("reload modules", null);
+    });
     $(document).on('click', 'a', function(e){
         e.preventDefault();
         socket.emit("open link", $(this).attr("href"));

@@ -13,6 +13,13 @@ class Matcher(object):
     def __init__(self, threshold=75, egg_threshold=85):
         self.threshold = threshold
         self.egg_threshold = egg_threshold
+        self.plugins = {}
+        self.eggs = {}
+        self.load_plugins()
+
+    def load_plugins(self):
+        self.plugins.clear()
+        self.eggs.clear()
         # Location of this script
         file_path = path.abspath(path.dirname(__file__))
         # Create pluginbase
@@ -24,8 +31,6 @@ class Matcher(object):
             ]
         )
         # Load all plugins
-        self.plugins = {}
-        self.eggs = {}
         self.fallback = None
         for plugin_name in self.plugin_source.list_plugins():
             plugin = self.plugin_source.load_plugin(plugin_name)
@@ -122,10 +127,18 @@ class FirstMatcher(Matcher):
 class SpacyMatcher(Matcher):
     """Uses an NLP tree to match modules."""
     def __init__(self, threshold=75, egg_threshold=85):
+        self.first_match = FirstMatcher(threshold, egg_threshold)
         super().__init__(threshold, egg_threshold)
-        self.first_match = FirstMatcher(threshold=self.threshold)
         # The NLP processor is assigned outside the class, after init
         self.nlp = None
+
+    def load_plugins(self):
+        self.first_match.load_plugins()
+        self.plugins = self.first_match.plugins
+        self.fallback = self.first_match.fallback
+
+    def egg_match(self, query):
+        return self.first_match.egg_match(query)
 
     def nlp_tree(self, t, s=0):
         """Iterate through a SpaCy tree."""

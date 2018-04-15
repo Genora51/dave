@@ -54,6 +54,11 @@ def run_server(port):
         """Open a link in browser"""
         webbrowser.open(data)
 
+    @sio.on('reload modules', namespace='/')
+    async def reload_modules(sid, data):
+        """Reload the matcher's modules."""
+        module_match.load_plugins()
+
     # Initialise routes and start server.
     app.router.add_get('/', index)
     app.router.add_static('/', uidir)
