@@ -4,11 +4,32 @@ body {
     width: 100vw;
     padding: 0;
     margin: 0;
+    font-family: Arial;
+    background-color: #ececec;
+}
+
+.toolbar {
+    height: 20px;
+    position: fixed;
+    z-index: 100;
+    padding: 10px;
+    font-size: 20px;
+}
+
+.toolbar .reload {
+    float: left;
+    cursor: pointer;
+    transition: opacity .3s ease,
+                transform .3s ease;
+}
+
+.toolbar .reload:hover {
+    opacity: 0.7;
+    transform: scale(0.9) rotate(360deg);
 }
 
 .main {
     height: calc(100vh - 60px);
-    background-color: #ececec;
     padding: 5px;
     overflow: scroll;
 }
@@ -17,6 +38,7 @@ body {
 .input {
     height: 50px;
     width: 100vw;
+    background: #fff;
 }
 
 #user-input {
@@ -73,7 +95,6 @@ body {
     border-radius: 25px;
     padding:10px;
     margin:2px;
-    font-family: Arial;
     clear: both;
     overflow: hidden;
     transition: border-radius 0.2s;
