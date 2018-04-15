@@ -9,21 +9,29 @@ body {
 }
 
 .toolbar {
-    height: 20px;
+    height: 30px;
     position: fixed;
     z-index: 100;
-    padding: 10px;
-    font-size: 20px;
+    padding: 5px;
+    font-size: 18px;
+    background-color: #ccc;
+    border-bottom-right-radius: 10px;
 }
 
-.toolbar .reload {
+.toolbar div {
     float: left;
+    width: 20px;
+    height: 20px;
+    margin: 5px;
     cursor: pointer;
+}
+
+.reload svg {
     transition: opacity .3s ease,
                 transform .3s ease;
 }
 
-.toolbar .reload:hover {
+.toolbar .reload:hover svg {
     opacity: 0.7;
     transform: scale(0.9) rotate(360deg);
 }
