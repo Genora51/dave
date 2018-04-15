@@ -13,6 +13,13 @@ class Matcher(object):
     def __init__(self, threshold=75, egg_threshold=85):
         self.threshold = threshold
         self.egg_threshold = egg_threshold
+        self.plugins = {}
+        self.eggs = {}
+        self.load_plugins()
+
+    def load_plugins(self):
+        self.plugins.clear()
+        self.eggs.clear()
         # Location of this script
         file_path = path.abspath(path.dirname(__file__))
         # Create pluginbase
@@ -24,8 +31,6 @@ class Matcher(object):
             ]
         )
         # Load all plugins
-        self.plugins = {}
-        self.eggs = {}
         self.fallback = None
         for plugin_name in self.plugin_source.list_plugins():
             plugin = self.plugin_source.load_plugin(plugin_name)
